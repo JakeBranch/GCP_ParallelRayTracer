@@ -14,6 +14,8 @@ class Ray
         glm::vec3 getOrigin();
         glm::vec3 getDirection();
 
+        bool isPrimary;
+
     private:
         glm::vec3 direction;
         glm::vec3 origin; 
