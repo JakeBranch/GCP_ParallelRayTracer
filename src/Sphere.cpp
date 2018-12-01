@@ -29,8 +29,8 @@ glm::vec3 Sphere::shade(Ray ray, glm::vec3 intersectPoint)
     glm::vec3 ambient = ambientStrength * color;
 
     //-------------------------------------------------------------------DIFFUSE
-    glm::vec3 lightPos = glm::vec3(600, 800, 0);
-    
+    glm::vec3 lightPos = glm::vec3(300, 300, -100);
+ 
     glm::vec3 lightDirection = glm::normalize(lightPos - intersectPoint);
 
     glm::vec3 surfaceNormal = glm::normalize((intersectPoint - position) / radius);
@@ -49,5 +49,7 @@ glm::vec3 Sphere::shade(Ray ray, glm::vec3 intersectPoint)
     surfaceColor = (ambient + diff) * color;
 
     // std::cout << specular.x << " : " << specular.y<< " : " << specular.z << std::endl;
-    return surfaceColor;
+
+    return glm::clamp(surfaceColor, glm::vec3(0,0,0), glm::vec3(1,1,1));
+    // return color;
 }
