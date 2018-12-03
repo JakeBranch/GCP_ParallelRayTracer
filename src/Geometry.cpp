@@ -31,12 +31,19 @@ IntersectResponse Geometry::getIntersectPoint(Ray ray, std::shared_ptr<Sphere> s
 {
     IntersectResponse rtn;
 
+    float distToCenter = glm::length(ray.getOrigin() - sphere->getPosition());
+    if(distToCenter < sphere->getRadius())
+    {
+        rtn.hit = false;
+        return rtn;
+    }
+
     glm::vec3 a = ray.getOrigin() - glm::vec3(0,0,0);  
     glm::vec3 p = sphere->getPosition() - glm::vec3(0,0,0);
 
     glm::vec3 rayDirection = glm::normalize(ray.getDirection());
 
-    glm::vec3 closestPointOnLine = a + ((p - a) * rayDirection) * rayDirection;
+    glm::vec3 closestPointOnLine = a + (glm::dot((p - a) , rayDirection) * rayDirection);
 
     float pointToLine = glm::length(p - closestPointOnLine);
 
@@ -46,10 +53,21 @@ IntersectResponse Geometry::getIntersectPoint(Ray ray, std::shared_ptr<Sphere> s
         return rtn;
     }
 
+    rtn.hit = true;
+
     // rtn.distance = pointToLine;
     float distanceToIntersect = glm::sqrt((sphere->getRadius() * sphere->getRadius()) - (pointToLine * pointToLine));
 
-    rtn.intersectPoint = a + (glm::dot((p - a), rayDirection) - distanceToIntersect) * rayDirection;
+    //distance to intersect
+    float tempDist = (glm::dot((p - a), rayDirection) - distanceToIntersect);
+
+    if(tempDist < 0)
+    {
+        rtn.hit = false;
+        return rtn;
+    }
+
+    rtn.intersectPoint = a + tempDist * rayDirection;
 
     rtn.distance = glm::length(ray.getOrigin() - rtn.intersectPoint);
 

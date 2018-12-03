@@ -5,6 +5,7 @@
 
 #include <memory>
 #include <list>
+#include <omp.h>
 
 #include "Camera.h"
 #include "Ray.h"
@@ -21,26 +22,20 @@ int main(int argc, char *argv[])
     std::shared_ptr<Window> window = std::make_shared<Window>();
     std::shared_ptr<RayTracer> rayTracer = std::make_shared<RayTracer>();
     
-    std::shared_ptr<Sphere> sphere1 = std::make_shared<Sphere>(glm::vec3(200, 200 , 0), 100, glm::vec3(0,0,0.75f));
+    std::shared_ptr<Sphere> sphere1 = std::make_shared<Sphere>(glm::vec3(200, 200 , 100), 100, glm::vec3(0,0,0.75f));
     rayTracer->addSphere(sphere1);
 
-    // std::shared_ptr<Sphere> sphere9 = std::make_shared<Sphere>(glm::vec3(200, 200 , -500), 100, glm::vec3(1,0,0));
-    // rayTracer->addSphere(sphere9);
+    std::shared_ptr<Sphere> sphere9 = std::make_shared<Sphere>(glm::vec3(200, 200 , 500), 100, glm::vec3(1,0,0));
+    rayTracer->addSphere(sphere9);
 
-    std::shared_ptr<Sphere> sphere2 = std::make_shared<Sphere>(glm::vec3(400, 400 , 0), 100, glm::vec3(0,0,0.75f));
+    std::shared_ptr<Sphere> sphere2 = std::make_shared<Sphere>(glm::vec3(400, 400 , 100), 100, glm::vec3(0,0,0.75f));
     rayTracer->addSphere(sphere2);
 
-    std::shared_ptr<Sphere> sphere3 = std::make_shared<Sphere>(glm::vec3(200, 400, 0), 100, glm::vec3(0.75f,0,0));
+    std::shared_ptr<Sphere> sphere3 = std::make_shared<Sphere>(glm::vec3(200, 400, 100), 100, glm::vec3(0.75f,0,0));
     rayTracer->addSphere(sphere3);
 
-    std::shared_ptr<Sphere> sphere4 = std::make_shared<Sphere>(glm::vec3(400, 200, 0), 100, glm::vec3(0.75f,0,0));
+    std::shared_ptr<Sphere> sphere4 = std::make_shared<Sphere>(glm::vec3(400, 200, 100), 100, glm::vec3(0.75f,0,0));
     rayTracer->addSphere(sphere4);
-
-    // std::shared_ptr<Sphere> sphere1 = std::make_shared<Sphere>(glm::vec3(200, 300 , 200), 100, glm::vec3(0,0,0.75f));
-    // rayTracer->addSphere(sphere1);
-
-    // std::shared_ptr<Sphere> sphere2 = std::make_shared<Sphere>(glm::vec3(400, 300 , 200), 100, glm::vec3(0.75f, 0, 0));
-    // rayTracer->addSphere(sphere2);
 
     bool running = true;
     bool finished = false;
@@ -60,8 +55,7 @@ int main(int argc, char *argv[])
         if(!finished)
         {
 
-            // #pragma omp parallel
-            // #pragma omp for
+            // #pragma omp parallel for
             for(int y = 0; y < 800; y++)
             {
                 
@@ -69,19 +63,19 @@ int main(int argc, char *argv[])
                 {
                     Ray ray = camera->createRay(glm::vec3(x, y, 0));
 
-                    glm::vec3 color = glm::vec3(0,0,0);
+                    glm::vec3 color = glm::vec3(0.1f,0.1f,0.1f);
 
                     rayTracer->reset();
-                    color = rayTracer->traceRay(ray, color);
+                    rayTracer->traceRay(ray, color);
 
                     color.x *= 255;
                     color.y *= 255;
                     color.z *= 255;
-
+                    
                     // #pragma omp critical
-                    // {
-                        window->drawPixel(x, y, color);
-                    // }
+                    {
+                        window->drawPixel(x, y, glm::clamp(color, glm::vec3(0,0,0), glm::vec3(255,255,255)));
+                    }
                 }
 
             }
