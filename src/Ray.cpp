@@ -3,6 +3,7 @@
 Ray::Ray()
 {
     direction = glm::vec3(0, 0, 1);
+    isPrimary = true;
 }
 
 void Ray::setDirection(glm::vec3 dir)

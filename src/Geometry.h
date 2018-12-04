@@ -18,10 +18,9 @@ class Geometry
 {
     public:
     Geometry();
-
-    glm::vec3 getClosestPoint(Ray ray, std::shared_ptr<Sphere> sphere);
-    glm::vec3 getClosestIntersectionPoint(Ray ray, std::shared_ptr<Sphere> sphere, float distance);
+    
     IntersectResponse raySphereIntersection(Ray ray, std::shared_ptr<Sphere> sphere);
+    IntersectResponse getIntersectPoint(Ray ray, std::shared_ptr<Sphere> sphere);
 };
 
 #endif

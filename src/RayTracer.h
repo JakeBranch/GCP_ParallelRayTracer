@@ -13,13 +13,18 @@ class RayTracer
 {
     public:
         RayTracer();
-        glm::vec3 traceRay(Ray ray);
+        void traceRay(Ray ray, glm::vec3 &color);
 
         void addSphere(std::shared_ptr<Sphere> sphere);
+
+        void reset();
 
     private:
         std::list<std::shared_ptr<Sphere>> spheres; 
         std::shared_ptr<Geometry> geometry;
+
+        int bounceLimit;
+        int bounceCount;
 };
 
 #endif
