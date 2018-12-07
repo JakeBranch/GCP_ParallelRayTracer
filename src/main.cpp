@@ -6,6 +6,8 @@
 #include <memory>
 #include <list>
 #include <omp.h>
+#include <ppl.h> 
+#include <ppltasks.h>
 
 #include "Camera.h"
 #include "Ray.h"
@@ -25,8 +27,8 @@ int main(int argc, char *argv[])
     std::shared_ptr<Sphere> sphere1 = std::make_shared<Sphere>(glm::vec3(200, 200 , 100), 100, glm::vec3(0,0,0.75f));
     rayTracer->addSphere(sphere1);
 
-    std::shared_ptr<Sphere> sphere9 = std::make_shared<Sphere>(glm::vec3(200, 200 , 500), 100, glm::vec3(1,0,0));
-    rayTracer->addSphere(sphere9);
+    // std::shared_ptr<Sphere> sphere9 = std::make_shared<Sphere>(glm::vec3(200, 200 , 500), 100, glm::vec3(1,0,0));
+    // rayTracer->addSphere(sphere9);
 
     std::shared_ptr<Sphere> sphere2 = std::make_shared<Sphere>(glm::vec3(400, 400 , 100), 100, glm::vec3(0,0,0.75f));
     rayTracer->addSphere(sphere2);
@@ -39,6 +41,31 @@ int main(int argc, char *argv[])
 
     bool running = true;
     bool finished = false;
+
+    Concurrency::task<void> traceRays([&]()
+    {
+        Concurrency::critical_section cs;
+        Concurrency::parallel_for (size_t(0), size_t(800), [&](size_t y)
+        {
+            for(size_t x = 0; x < 600; x++)
+            {
+                Ray ray = camera->createRay(glm::vec3(x, y, 0));
+
+                glm::vec3 color = glm::vec3(0.1f,0.1f,0.1f);
+
+                rayTracer->reset();
+                rayTracer->traceRay(ray, color);
+
+                color.x *= 255;
+                color.y *= 255;
+                color.z *= 255;
+                
+                cs.lock();
+                    window->drawPixel(x, y, glm::clamp(color, glm::vec3(0,0,0), glm::vec3(255,255,255)));
+                cs.unlock();
+            }
+        });
+    });
 
 	while (running)
 	{
@@ -54,34 +81,11 @@ int main(int argc, char *argv[])
 
         if(!finished)
         {
-
-            // #pragma omp parallel for
-            for(int y = 0; y < 800; y++)
+            if(traceRays.is_done())
             {
-                
-                for(int x = 0; x < 600; x++)
-                {
-                    Ray ray = camera->createRay(glm::vec3(x, y, 0));
-
-                    glm::vec3 color = glm::vec3(0.1f,0.1f,0.1f);
-
-                    rayTracer->reset();
-                    rayTracer->traceRay(ray, color);
-
-                    color.x *= 255;
-                    color.y *= 255;
-                    color.z *= 255;
-                    
-                    // #pragma omp critical
-                    {
-                        window->drawPixel(x, y, glm::clamp(color, glm::vec3(0,0,0), glm::vec3(255,255,255)));
-                    }
-                }
-
+                window->display();
+                finished = true;
             }
-
-            window->display();
-            finished = true;
         }
     }
 
