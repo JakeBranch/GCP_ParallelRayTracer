@@ -25,8 +25,8 @@ int main(int argc, char *argv[])
     std::shared_ptr<Sphere> sphere1 = std::make_shared<Sphere>(glm::vec3(200, 200 , 100), 100, glm::vec3(0,0,0.75f));
     rayTracer->addSphere(sphere1);
 
-    std::shared_ptr<Sphere> sphere9 = std::make_shared<Sphere>(glm::vec3(200, 200 , 500), 100, glm::vec3(1,0,0));
-    rayTracer->addSphere(sphere9);
+    // std::shared_ptr<Sphere> sphere9 = std::make_shared<Sphere>(glm::vec3(200, 200 , 500), 100, glm::vec3(1,0,0));
+    // rayTracer->addSphere(sphere9);
 
     std::shared_ptr<Sphere> sphere2 = std::make_shared<Sphere>(glm::vec3(400, 400 , 100), 100, glm::vec3(0,0,0.75f));
     rayTracer->addSphere(sphere2);
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
         if(!finished)
         {
 
-            // #pragma omp parallel for
+            #pragma omp parallel for
             for(int y = 0; y < 800; y++)
             {
                 
@@ -65,14 +65,13 @@ int main(int argc, char *argv[])
 
                     glm::vec3 color = glm::vec3(0.1f,0.1f,0.1f);
 
-                    rayTracer->reset();
                     rayTracer->traceRay(ray, color);
 
                     color.x *= 255;
                     color.y *= 255;
                     color.z *= 255;
                     
-                    // #pragma omp critical
+                    #pragma omp critical
                     {
                         window->drawPixel(x, y, glm::clamp(color, glm::vec3(0,0,0), glm::vec3(255,255,255)));
                     }
