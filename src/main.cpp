@@ -6,6 +6,7 @@
 #include <memory>
 #include <list>
 #include <omp.h>
+#include <chrono>
 
 #include "Camera.h"
 #include "Ray.h"
@@ -55,24 +56,26 @@ int main(int argc, char *argv[])
         if(!finished)
         {
 
+            std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
             #pragma omp parallel for
             for(int y = 0; y < 800; y++)
             {
                 
                 for(int x = 0; x < 600; x++)
                 {
-                    Ray ray = camera->createRay(glm::vec3(x, y, 0));
-
-                    glm::vec3 color = glm::vec3(0.1f,0.1f,0.1f);
-
-                    rayTracer->traceRay(ray, color);
-
-                    color.x *= 255;
-                    color.y *= 255;
-                    color.z *= 255;
-                    
                     #pragma omp critical
                     {
+                        Ray ray = camera->createRay(glm::vec3(x, y, 0));
+
+                        glm::vec3 color = glm::vec3(0.1f,0.1f,0.1f);
+
+                        rayTracer->traceRay(ray, color);
+
+                        color.x *= 255;
+                        color.y *= 255;
+                        color.z *= 255;
+                        
+            
                         window->drawPixel(x, y, glm::clamp(color, glm::vec3(0,0,0), glm::vec3(255,255,255)));
                     }
                 }
@@ -80,7 +83,11 @@ int main(int argc, char *argv[])
             }
 
             window->display();
+            std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
             finished = true;
+
+            std::chrono::duration<double> executionTime = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
+            std::cout << "Time taken: " << executionTime.count() << std::endl;
         }
     }
 
