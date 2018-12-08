@@ -8,6 +8,7 @@
 #include <omp.h>
 #include <ppl.h> 
 #include <ppltasks.h>
+#include <chrono>
 
 #include "Camera.h"
 #include "Ray.h"
@@ -42,6 +43,7 @@ int main(int argc, char *argv[])
     bool running = true;
     bool finished = false;
 
+    std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
     Concurrency::task<void> traceRays([&]()
     {
         Concurrency::critical_section cs;
@@ -84,7 +86,11 @@ int main(int argc, char *argv[])
             if(traceRays.is_done())
             {
                 window->display();
+                std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
                 finished = true;
+
+                std::chrono::duration<double> executionTime = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
+                std::cout << "Time taken: " << executionTime.count() << std::endl;
             }
         }
     }
