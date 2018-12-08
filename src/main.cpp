@@ -9,6 +9,7 @@
 #include <thread>
 #include <mutex>
 #include <vector>
+#include <chrono>
 
 #include "Camera.h"
 #include "Ray.h"
@@ -71,6 +72,7 @@ int main(int argc, char *argv[])
 
         if(!finished)
         {
+            std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
             for(int i = 0; i < 16; i++)
             {
                 if(i != 0)
@@ -99,7 +101,11 @@ int main(int argc, char *argv[])
             }
 
             window->display();
+            std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
             finished = true;
+
+            std::chrono::duration<double> executionTime = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
+            std::cout << "Time taken: " << executionTime.count() << std::endl;
         }
     }
 
@@ -115,6 +121,7 @@ void traceRays(int startY, int endY, int startX, int endX, std::shared_ptr<Camer
         
         for(int x = startX; x < endX; x++)
         {
+            
             Ray ray = camera->createRay(glm::vec3(x, y, 0));
 
             glm::vec3 color = glm::vec3(0.1f,0.1f,0.1f);
