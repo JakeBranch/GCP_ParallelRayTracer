@@ -56,7 +56,6 @@ int main(int argc, char *argv[])
 
                 glm::vec3 color = glm::vec3(0.1f,0.1f,0.1f);
 
-                rayTracer->reset();
                 rayTracer->traceRay(ray, color);
 
                 color.x *= 255;
