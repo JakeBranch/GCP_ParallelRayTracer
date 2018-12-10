@@ -5,9 +5,6 @@
 
 #include <memory>
 #include <list>
-#include <omp.h>
-#include <thread>
-#include <mutex>
 #include <vector>
 #include <chrono>
 
@@ -16,10 +13,6 @@
 #include "Sphere.h"
 #include "Window.h"
 #include "RayTracer.h"
-
-std::mutex mutex;
-
-void traceRays(int startY, int endY, int startX, int endX, std::shared_ptr<Camera> camera, std::shared_ptr<RayTracer> rayTracer, std::shared_ptr<Window> window);
 
 int main(int argc, char *argv[])
 {
@@ -48,16 +41,6 @@ int main(int argc, char *argv[])
     bool running = true;
     bool finished = false;
 
-    std::vector<std::thread> threads;
-
-    int stepY = 200;
-    int startY = 0;
-    int endY = stepY;
-
-    int stepX = 150;
-    int startX = 0;
-    int endX = stepX;
-
 	while (running)
 	{
 		SDL_Event event = { 0 };
@@ -73,31 +56,21 @@ int main(int argc, char *argv[])
         if(!finished)
         {
             std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-            for(int i = 0; i < 16; i++)
+            
+            for(int y = 0; y < 800; y++)
             {
-                if(i != 0)
+                for(int x = 0; x < 600; x++)
                 {
-                    if(i % 4 == 0)
-                    {
-                        startY += stepY;
-                        endY += stepY;
+                    Ray ray = camera->createRay(glm::vec3(x, y, 0));
+                    glm::vec3 color = glm::vec3(0.1f,0.1f,0.1f);
+                    rayTracer->traceRay(ray, color);
 
-                        startX = 0;
-                        endX = stepX;
-                    }
-                    else
-                    {
-                        startX += stepX;
-                        endX += stepX;
-                    }
+                    color.x *= 255;
+                    color.y *= 255;
+                    color.z *= 255;
+
+                    window->drawPixel(x, y, glm::clamp(color, glm::vec3(0,0,0), glm::vec3(255,255,255)));
                 }
-
-                threads.push_back(std::thread(traceRays, startY, endY, startX, endX, camera, rayTracer, window));
-            }
-
-            for(std::vector<std::thread>::size_type i = 0; i != threads.size(); i++)
-            {
-                threads[i].join();
             }
 
             window->display();
@@ -112,31 +85,4 @@ int main(int argc, char *argv[])
     window->cleanUp();
 
     return 0;
-}
-
-void traceRays(int startY, int endY, int startX, int endX, std::shared_ptr<Camera> camera, std::shared_ptr<RayTracer> rayTracer, std::shared_ptr<Window> window)
-{
-    for(int y = startY; y < endY; y++)
-    {
-        
-        for(int x = startX; x < endX; x++)
-        {
-            
-            Ray ray = camera->createRay(glm::vec3(x, y, 0));
-
-            glm::vec3 color = glm::vec3(0.1f,0.1f,0.1f);
-
-            rayTracer->reset();
-            rayTracer->traceRay(ray, color);
-
-            color.x *= 255;
-            color.y *= 255;
-            color.z *= 255;
-            
-            mutex.lock();
-                window->drawPixel(x, y, glm::clamp(color, glm::vec3(0,0,0), glm::vec3(255,255,255)));
-            mutex.unlock();
-        }
-
-    }
 }
