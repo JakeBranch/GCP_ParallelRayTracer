@@ -32,7 +32,7 @@ IntersectResponse Geometry::getIntersectPoint(Ray ray, std::shared_ptr<Sphere> s
     IntersectResponse rtn;
 
     float distToCenter = glm::length(ray.getOrigin() - sphere->getPosition());
-    if(distToCenter < sphere->getRadius())
+    if(distToCenter <= sphere->getRadius())
     {
         rtn.hit = false;
         return rtn;
