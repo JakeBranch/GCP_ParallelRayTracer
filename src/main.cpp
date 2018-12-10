@@ -42,32 +42,6 @@ int main(int argc, char *argv[])
     bool running = true;
     bool finished = false;
 
-    std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-    Concurrency::task<void> traceRays([&]()
-    {
-        Concurrency::critical_section cs;
-        Concurrency::parallel_for (size_t(0), size_t(800), [&](size_t y)
-        {
-            for(size_t x = 0; x < 600; x++)
-            {
-                Ray ray = camera->createRay(glm::vec3(x, y, 0));
-
-                glm::vec3 color = glm::vec3(0.1f,0.1f,0.1f);
-
-                rayTracer->reset();
-                rayTracer->traceRay(ray, color);
-
-                color.x *= 255;
-                color.y *= 255;
-                color.z *= 255;
-                
-                cs.lock();
-                    window->drawPixel(x, y, glm::clamp(color, glm::vec3(0,0,0), glm::vec3(255,255,255)));
-                cs.unlock();
-            }
-        });
-    });
-
 	while (running)
 	{
 		SDL_Event event = { 0 };
@@ -83,14 +57,11 @@ int main(int argc, char *argv[])
         if(!finished)
         {
             std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-            #pragma omp parallel for
             for(int y = 0; y < 800; y++)
             {
                 
                 for(int x = 0; x < 600; x++)
                 {
-                    #pragma omp critical
-                    {
                         Ray ray = camera->createRay(glm::vec3(x, y, 0));
 
                         glm::vec3 color = glm::vec3(0.1f,0.1f,0.1f);
@@ -103,11 +74,8 @@ int main(int argc, char *argv[])
                         
             
                         window->drawPixel(x, y, glm::clamp(color, glm::vec3(0,0,0), glm::vec3(255,255,255)));
-                    }
                 }
 
-                std::chrono::duration<double> executionTime = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
-                std::cout << "Time taken: " << executionTime.count() << std::endl;
             }
 
             window->display();
