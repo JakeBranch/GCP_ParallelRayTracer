@@ -8,6 +8,7 @@
 #include <omp.h>
 #include <ppl.h> 
 #include <ppltasks.h>
+#include <vector>
 #include <chrono>
 
 #include "Camera.h"
@@ -25,19 +26,19 @@ int main(int argc, char *argv[])
     std::shared_ptr<Window> window = std::make_shared<Window>();
     std::shared_ptr<RayTracer> rayTracer = std::make_shared<RayTracer>();
     
-    std::shared_ptr<Sphere> sphere1 = std::make_shared<Sphere>(glm::vec3(200, 200 , 100), 100, glm::vec3(0,0,0.75f));
+    std::shared_ptr<Sphere> sphere1 = std::make_shared<Sphere>(glm::vec3(200, 200 , 300), 100, glm::vec3(0,0,0.75f));
     rayTracer->addSphere(sphere1);
 
-    // std::shared_ptr<Sphere> sphere9 = std::make_shared<Sphere>(glm::vec3(200, 200 , 500), 100, glm::vec3(1,0,0));
-    // rayTracer->addSphere(sphere9);
+    std::shared_ptr<Sphere> sphere9 = std::make_shared<Sphere>(glm::vec3(300, 300 , 101), 100, glm::vec3(1,0,0));
+    rayTracer->addSphere(sphere9);
 
-    std::shared_ptr<Sphere> sphere2 = std::make_shared<Sphere>(glm::vec3(400, 400 , 100), 100, glm::vec3(0,0,0.75f));
+    std::shared_ptr<Sphere> sphere2 = std::make_shared<Sphere>(glm::vec3(400, 400 , 300), 100, glm::vec3(0,0,0.75f));
     rayTracer->addSphere(sphere2);
 
-    std::shared_ptr<Sphere> sphere3 = std::make_shared<Sphere>(glm::vec3(200, 400, 100), 100, glm::vec3(0.75f,0,0));
+    std::shared_ptr<Sphere> sphere3 = std::make_shared<Sphere>(glm::vec3(200, 400, 300), 100, glm::vec3(0.75f,0,0));
     rayTracer->addSphere(sphere3);
 
-    std::shared_ptr<Sphere> sphere4 = std::make_shared<Sphere>(glm::vec3(400, 200, 100), 100, glm::vec3(0.75f,0,0));
+    std::shared_ptr<Sphere> sphere4 = std::make_shared<Sphere>(glm::vec3(400, 200, 300), 100, glm::vec3(0.75f,0,0));
     rayTracer->addSphere(sphere4);
 
     bool running = true;
@@ -83,6 +84,7 @@ int main(int argc, char *argv[])
 
         if(!finished)
         {
+
             if(traceRays.is_done())
             {
                 window->display();
@@ -92,6 +94,7 @@ int main(int argc, char *argv[])
                 std::chrono::duration<double> executionTime = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
                 std::cout << "Time taken: " << executionTime.count() << std::endl;
             }
+
         }
     }
 

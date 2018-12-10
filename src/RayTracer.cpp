@@ -8,9 +8,6 @@
 RayTracer::RayTracer()
 {
     geometry = std::make_shared<Geometry>();
-
-    bounceLimit = 1;
-    bounceCount = 0;
 }
 
 void RayTracer::traceRay(Ray ray, glm::vec3 &color)
@@ -20,17 +17,14 @@ void RayTracer::traceRay(Ray ray, glm::vec3 &color)
     for(std::list<std::shared_ptr<Sphere>>::iterator it = spheres.begin();
         it != spheres.end(); it++)
     {
-        // if(ray.getOrigin().x > 160)
-        // {
-        //     if(ray.getOrigin().y > 160)
-        //     {
-		// 		std::cout << "SDS" << std::endl;
-        //     }
-        // }
-
         IntersectResponse response = geometry->raySphereIntersection(ray, (*it));
         if(response.hit)
         {
+            if(ray.isShadow)
+            {
+                color =  glm::vec3(0,0,0);
+                return;
+            }
             if(response.distance < distance)
             {
                 distance = response.distance;
@@ -43,30 +37,26 @@ void RayTracer::traceRay(Ray ray, glm::vec3 &color)
                 if(ray.isPrimary)
                 {
                     glm::vec3 surfaceNormal = (response.intersectPoint - (*it)->getPosition()) / (*it)->getRadius();
-                    glm::vec3 lightDirection = glm::normalize(glm::vec3(300, 300, -150) - response.intersectPoint);
-                    // glm::vec3 lightDirection = glm::normalize(response.intersectPoint - glm::vec3(300,300,-150));
 
-                    // glm::vec3 reflectDirection = (2 * (glm::dot(surfaceNormal, -lightDirection)) * surfaceNormal - lightDirection);
-                    // glm::vec3 reflectDirection = lightDirection - 2 * glm::dot(lightDirection, surfaceNormal) * surfaceNormal;
-                    // glm::vec3 reflectDirection = lightDirection * glm::dot(lightDirection, surfaceNormal) * surfaceNormal;
-                    // glm::vec3 reflectDirection = (2 * glm::dot(surfaceNormal, lightDirection)) * surfaceNormal - lightDirection;
-                    // glm::vec3 reflectDirection = (2 * (glm::dot(lightDirection, -surfaceNormal)) * surfaceNormal - lightDirection);
-
-                    //--- Correct solutions..?
-                    // glm::vec3 reflectDirection = glm::reflect(lightDirection, surfaceNormal);
+                    glm::vec3 lightDirection = glm::normalize(glm::vec3(300, 300, -200) - response.intersectPoint);
 
                     // glm::vec3 reflectDirection = 2 * (glm::dot(lightDirection, surfaceNormal)) * surfaceNormal - lightDirection;
                     glm::vec3 reflectDirection = glm::reflect(ray.getDirection(), surfaceNormal);
                     // glm::vec3 reflectDirection = -lightDirection - (2.0f * glm::dot(surfaceNormal, -lightDirection)) * surfaceNormal;
-
 
                     Ray reflectRay;
                     reflectRay.setDirection(reflectDirection);
                     reflectRay.setOrigin(response.intersectPoint + surfaceNormal * 0.01f);
                     reflectRay.isPrimary = false;
 
-                    bounceCount++;
                     traceRay(reflectRay, color);
+
+                    Ray shadowRay;
+                    shadowRay.setDirection(lightDirection);
+                    shadowRay.setOrigin(response.intersectPoint + surfaceNormal * 0.01f);
+                    shadowRay.isPrimary = false;
+                    shadowRay.isShadow = true;
+                    traceRay(shadowRay, color);
                 }
             }
         }
@@ -76,9 +66,4 @@ void RayTracer::traceRay(Ray ray, glm::vec3 &color)
 void RayTracer::addSphere(std::shared_ptr<Sphere> sphere)
 {
     spheres.push_back(sphere);
-}
-
-void RayTracer::reset()
-{
-    bounceCount = 0;
 }

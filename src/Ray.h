@@ -15,6 +15,7 @@ class Ray
         glm::vec3 getDirection();
 
         bool isPrimary;
+        bool isShadow;
 
     private:
         glm::vec3 direction;

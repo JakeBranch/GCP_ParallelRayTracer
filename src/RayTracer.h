@@ -17,14 +17,9 @@ class RayTracer
 
         void addSphere(std::shared_ptr<Sphere> sphere);
 
-        void reset();
-
     private:
         std::list<std::shared_ptr<Sphere>> spheres; 
         std::shared_ptr<Geometry> geometry;
-
-        int bounceLimit;
-        int bounceCount;
 };
 
 #endif
