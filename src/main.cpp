@@ -121,19 +121,18 @@ void traceRays(int startY, int endY, int startX, int endX, std::shared_ptr<Camer
         
         for(int x = startX; x < endX; x++)
         {
-            
-            Ray ray = camera->createRay(glm::vec3(x, y, 0));
-
-            glm::vec3 color = glm::vec3(0.1f,0.1f,0.1f);
-
-            rayTracer->reset();
-            rayTracer->traceRay(ray, color);
-
-            color.x *= 255;
-            color.y *= 255;
-            color.z *= 255;
-            
             mutex.lock();
+                Ray ray = camera->createRay(glm::vec3(x, y, 0));
+
+                glm::vec3 color = glm::vec3(0.1f,0.1f,0.1f);
+
+                rayTracer->traceRay(ray, color);
+
+                color.x *= 255;
+                color.y *= 255;
+                color.z *= 255;
+            
+            // mutex.lock();
                 window->drawPixel(x, y, glm::clamp(color, glm::vec3(0,0,0), glm::vec3(255,255,255)));
             mutex.unlock();
         }
