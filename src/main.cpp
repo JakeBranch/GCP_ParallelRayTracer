@@ -57,11 +57,14 @@ int main(int argc, char *argv[])
         if(!finished)
         {
             std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+            #pragma omp parallel for
             for(int y = 0; y < 800; y++)
             {
                 
                 for(int x = 0; x < 600; x++)
                 {
+                    #pragma omp critical
+                    {
                         Ray ray = camera->createRay(glm::vec3(x, y, 0));
 
                         glm::vec3 color = glm::vec3(0.1f,0.1f,0.1f);
@@ -74,6 +77,7 @@ int main(int argc, char *argv[])
                         
             
                         window->drawPixel(x, y, glm::clamp(color, glm::vec3(0,0,0), glm::vec3(255,255,255)));
+                    }
                 }
 
             }
