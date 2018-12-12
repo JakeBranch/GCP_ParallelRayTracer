@@ -38,7 +38,7 @@ void RayTracer::traceRay(Ray ray, glm::vec3 &color)
                 {
                     glm::vec3 surfaceNormal = (response.intersectPoint - (*it)->getPosition()) / (*it)->getRadius();
 
-                    glm::vec3 lightDirection = glm::normalize(glm::vec3(300, 300, -200) - response.intersectPoint);
+                    glm::vec3 lightDirection = glm::normalize(glm::vec3(100, 100, 250) - response.intersectPoint);
 
                     // glm::vec3 reflectDirection = 2 * (glm::dot(lightDirection, surfaceNormal)) * surfaceNormal - lightDirection;
                     glm::vec3 reflectDirection = glm::reflect(ray.getDirection(), surfaceNormal);
