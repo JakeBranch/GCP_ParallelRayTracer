@@ -8,12 +8,18 @@
 #include <omp.h>
 #include <vector>
 #include <chrono>
+#include <thread>
+#include <mutex>
 
 #include "Camera.h"
 #include "Ray.h"
 #include "Sphere.h"
 #include "Window.h"
 #include "RayTracer.h"
+
+std::mutex mutex;
+
+void traceRays(int startY, int endY, int startX, int endX, std::shared_ptr<Camera> camera, std::shared_ptr<RayTracer> rayTracer, std::shared_ptr<Window> window);
 
 int main(int argc, char *argv[])
 {
@@ -80,35 +86,27 @@ int main(int argc, char *argv[])
                 threads.push_back(std::thread(traceRays, quadPos.y, quadPos.y + stepY, quadPos.x, quadPos.x + stepX, camera, rayTracer, window));
             }
 
-
-            std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-            for(int y = 0; y < 800; y++)
+            for(std::vector<std::thread>::size_type i = 0; i != threads.size(); i++)
             {
-                
-                for(int x = 0; x < 600; x++)
+                threads[i].join();
+
+                if(threads[i].joinable())
                 {
-                        Ray ray = camera->createRay(glm::vec3(x, y, 0));
-
-                        glm::vec3 color = glm::vec3(0.1f,0.1f,0.1f);
-
-                        rayTracer->traceRay(ray, color);
-
-                        color.x *= 255;
-                        color.y *= 255;
-                        color.z *= 255;
-                        
-            
-                        window->drawPixel(x, y, glm::clamp(color, glm::vec3(0,0,0), glm::vec3(255,255,255)));
+                    if(quads.size() > 0)
+                    {
+                        glm::vec2 quadPos = quads.at(quads.size() - 1);
+                        quads.pop_back();
+                        threads[i] = std::thread(traceRays, quadPos.y, quadPos.y + stepY, quadPos.x, quadPos.x + stepX, camera, rayTracer, window);
+                    }
                 }
-
             }
 
             window->display();
             std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
             finished = true;
 
-            std::chrono::duration<double> executionTime = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
-            std::cout << "Time taken: " << executionTime.count() << std::endl;
+            // std::chrono::duration<double> executionTime = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
+            // std::cout << "Time taken: " << executionTime.count() << std::endl;
         }
     }
 
