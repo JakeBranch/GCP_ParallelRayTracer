@@ -23,8 +23,6 @@ void traceRays(int startY, int endY, int startX, int endX, std::shared_ptr<Camer
 
 int main(int argc, char *argv[])
 {
-    int num;
-    std::cin >> num;
 
     std::shared_ptr<Camera> camera = std::make_shared<Camera>();
     std::shared_ptr<Window> window = std::make_shared<Window>();
