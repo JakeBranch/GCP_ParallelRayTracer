@@ -23,9 +23,6 @@ void traceRays(int startY, int endY, int startX, int endX, std::shared_ptr<Camer
 
 int main(int argc, char *argv[])
 {
-    int num;
-    std::cin >> num;
-
     std::shared_ptr<Camera> camera = std::make_shared<Camera>();
     std::shared_ptr<Window> window = std::make_shared<Window>();
     std::shared_ptr<RayTracer> rayTracer = std::make_shared<RayTracer>();
@@ -50,14 +47,11 @@ int main(int argc, char *argv[])
 
     std::vector<std::thread> threads;
 
-    int stepY = 200;
-    int startY = 0;
-    int endY = stepY;
+    int numOfQuads = 100;
 
-    int stepX = 150;
-    int startX = 0;
-    int endX = stepX;
-
+    int stepX = 600 / glm::sqrt(numOfQuads);
+    int stepY = 800 / glm::sqrt(numOfQuads);
+  
 	while (running)
 	{
 		SDL_Event event = { 0 };
@@ -73,26 +67,12 @@ int main(int argc, char *argv[])
         if(!finished)
         {
             std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
-            for(int i = 0; i < 16; i++)
+            for(int y = 0; y < glm::sqrt(numOfQuads); y++)
             {
-                if(i != 0)
+                for(int x = 0; x < glm::sqrt(numOfQuads); x++)
                 {
-                    if(i % 4 == 0)
-                    {
-                        startY += stepY;
-                        endY += stepY;
-
-                        startX = 0;
-                        endX = stepX;
-                    }
-                    else
-                    {
-                        startX += stepX;
-                        endX += stepX;
-                    }
+                    threads.push_back(std::thread(traceRays, y * stepY, (y * stepY) + stepY, x * stepX, (x * stepX) + stepX, camera, rayTracer, window));
                 }
-
-                threads.push_back(std::thread(traceRays, startY, endY, startX, endX, camera, rayTracer, window));
             }
 
             for(std::vector<std::thread>::size_type i = 0; i != threads.size(); i++)
