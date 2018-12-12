@@ -29,7 +29,7 @@ glm::vec3 Sphere::shade(Ray ray, glm::vec3 intersectPoint)
     glm::vec3 ambient = ambientStrength * color;
 
     //-------------------------------------------------------------------DIFFUSE
-    glm::vec3 lightPos = glm::vec3(100, 100, 40);
+    glm::vec3 lightPos = glm::vec3(0, 100, 125);
  
     glm::vec3 lightDirection = glm::normalize(lightPos - intersectPoint);
     // glm::vec3 lightDirection = glm::normalize(intersectPoint - lightPos);
