@@ -57,6 +57,14 @@ int main(int argc, char *argv[])
     std::vector<std::thread> threads;
     std::vector<glm::vec2> quads;
 
+    for(int y = 0; y < glm::sqrt(numOfQuads); y++)
+    {
+        for(int x = 0; x < glm::sqrt(numOfQuads); x++)
+        {
+            quads.push_back(glm::vec2(x * stepX, y * stepY));
+        }
+    }
+
 	while (running)
 	{
 		SDL_Event event = { 0 };
@@ -71,33 +79,23 @@ int main(int argc, char *argv[])
 
         if(!finished)
         {
-            for(int y = 0; y < glm::sqrt(numOfQuads); y++)
+            std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
+            while(quads.size() > 0)
             {
-                for(int x = 0; x < glm::sqrt(numOfQuads); x++)
+                for(int i = 0; i < numOfThreads; i++)
                 {
-                    quads.push_back(glm::vec2(x * stepX, y * stepY));
-                }
-            }
+                    glm::vec2 quadPos = quads.at(quads.size() - 1);
+                    quads.pop_back();
 
-            for(int i = 0; i < numOfThreads; i++)
-            {
-                glm::vec2 quadPos = quads.at(quads.size() - 1);
-                quads.pop_back();
-                threads.push_back(std::thread(traceRays, quadPos.y, quadPos.y + stepY, quadPos.x, quadPos.x + stepX, camera, rayTracer, window));
-            }
-
-            for(std::vector<std::thread>::size_type i = 0; i != threads.size(); i++)
-            {
-                threads[i].join();
-
-                if(threads[i].joinable())
-                {
-                    if(quads.size() > 0)
-                    {
-                        glm::vec2 quadPos = quads.at(quads.size() - 1);
-                        quads.pop_back();
+                    if(threads.size() < numOfThreads)
+                        threads.push_back(std::thread(traceRays, quadPos.y, quadPos.y + stepY, quadPos.x, quadPos.x + stepX, camera, rayTracer, window));
+                    else
                         threads[i] = std::thread(traceRays, quadPos.y, quadPos.y + stepY, quadPos.x, quadPos.x + stepX, camera, rayTracer, window);
-                    }
+                }
+
+                for(std::vector<std::thread>::size_type i = 0; i != threads.size(); i++)
+                {
+                    threads[i].join();
                 }
             }
 
@@ -105,8 +103,8 @@ int main(int argc, char *argv[])
             std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
             finished = true;
 
-            // std::chrono::duration<double> executionTime = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
-            // std::cout << "Time taken: " << executionTime.count() << std::endl;
+            std::chrono::duration<double> executionTime = std::chrono::duration_cast<std::chrono::duration<double>>(end - start);
+            std::cout << "Time taken: " << executionTime.count() << std::endl;
         }
     }
 
