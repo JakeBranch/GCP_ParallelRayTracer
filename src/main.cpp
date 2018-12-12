@@ -63,19 +63,18 @@ int main(int argc, char *argv[])
                 
                 for(int x = 0; x < 600; x++)
                 {
+                    Ray ray = camera->createRay(glm::vec3(x, y, 0));
+
+                    glm::vec3 color = glm::vec3(0.1f,0.1f,0.1f);
+
+                    rayTracer->traceRay(ray, color);
+
+                    color.x *= 255;
+                    color.y *= 255;
+                    color.z *= 255;
+                        
                     #pragma omp critical
                     {
-                        Ray ray = camera->createRay(glm::vec3(x, y, 0));
-
-                        glm::vec3 color = glm::vec3(0.1f,0.1f,0.1f);
-
-                        rayTracer->traceRay(ray, color);
-
-                        color.x *= 255;
-                        color.y *= 255;
-                        color.z *= 255;
-                        
-            
                         window->drawPixel(x, y, glm::clamp(color, glm::vec3(0,0,0), glm::vec3(255,255,255)));
                     }
                 }
