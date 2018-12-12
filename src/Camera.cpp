@@ -11,61 +11,47 @@ Camera::Camera()
 
 Ray Camera::createRay(glm::vec3 pos)
 {
-    bool test = true;
 
-    if(!test)
-    {
-        Ray ray;
+    //normalize positions from -1 to 1
+    //Create two positions (z = -1  &&  z = 1)
 
-        ray.setOrigin(pos);
-        ray.setDirection(glm::vec3(0, 0, 1));
+    //multiply positions by inverse projection matrix
+    //divide coords by W (1)
 
-        return ray;
-    }
-    else
-    {
+    //multiply positions by inverse view matrix 
 
-        //normalize positions from -1 to 1
-        //Create two positions (z = -1  &&  z = 1)
+    glm::vec4 origin;
+    origin.x = (pos.x / (600.0f/2.0f)) - 1;
+    origin.y = -((pos.y / (800.0f/2.0f)) - 1);
+    origin.z = -1;
+    origin.w = 1;
 
-        //multiply positions by inverse projection matrix
-        //divide coords by W (1)
+    glm::vec4 destination;
+    destination.x = (pos.x / (600.0f/2.0f)) - 1;
+    destination.y = -((pos.y / (800.0f/2.0f)) - 1);
+    destination.z = 1;
+    destination.w = 1;
 
-        //multiply positions by inverse view matrix 
+    glm::mat4 projection = glm::perspective(glm::radians(45.0f), 3.0f / 4.0f, 0.1f, 100.f); 
 
-        glm::vec4 origin;
-        origin.x = (pos.x / (600.0f/2.0f)) - 1;
-        origin.y = -((pos.y / (800.0f/2.0f)) - 1);
-        origin.z = -1;
-        origin.w = 1;
+    origin = glm::inverse(projection) * origin;
+    destination = glm::inverse(projection) * destination;
 
-        glm::vec4 destination;
-        destination.x = (pos.x / (600.0f/2.0f)) - 1;
-        destination.y = -((pos.y / (800.0f/2.0f)) - 1);
-        destination.z = 1;
-        destination.w = 1;
+    origin /= origin.w;
+    destination /= destination.w;
 
-        glm::mat4 projection = glm::perspective(glm::radians(45.0f), 3.0f / 4.0f, 0.1f, 100.f); 
+    glm::mat4 view(1);
 
-        origin = glm::inverse(projection) * origin;
-        destination = glm::inverse(projection) * destination;
+    origin = glm::inverse(view) * origin;
+    destination = glm::inverse(view) * destination;
 
-        origin /= origin.w;
-        destination /= destination.w;
+    Ray ray;
 
-        glm::mat4 view(1);
+    ray.setOrigin(glm::vec3(origin));
 
-        origin = glm::inverse(view) * origin;
-        destination = glm::inverse(view) * destination;
+    glm::vec3 direction = glm::normalize(-glm::vec3(origin) + glm::vec3(destination));
 
-        Ray ray;
+    ray.setDirection(direction); 
 
-        ray.setOrigin(glm::vec3(origin));
-
-        glm::vec3 direction = glm::normalize(-glm::vec3(origin) + glm::vec3(destination));
-
-        ray.setDirection(direction); 
-
-        return ray;
-    }
+    return ray;
 }
