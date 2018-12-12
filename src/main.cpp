@@ -42,6 +42,15 @@ int main(int argc, char *argv[])
     bool running = true;
     bool finished = false;
 
+    int numOfThreads = 5;
+    int numOfQuads = 100;
+
+    float stepX = 600 / glm::sqrt(numOfQuads);
+    float stepY = 800 / glm::sqrt(numOfQuads);
+
+    std::vector<std::thread> threads;
+    std::vector<glm::vec2> quads;
+
 	while (running)
 	{
 		SDL_Event event = { 0 };
@@ -56,6 +65,22 @@ int main(int argc, char *argv[])
 
         if(!finished)
         {
+            for(int y = 0; y < glm::sqrt(numOfQuads); y++)
+            {
+                for(int x = 0; x < glm::sqrt(numOfQuads); x++)
+                {
+                    quads.push_back(glm::vec2(x * stepX, y * stepY));
+                }
+            }
+
+            for(int i = 0; i < numOfThreads; i++)
+            {
+                glm::vec2 quadPos = quads.at(quads.size() - 1);
+                quads.pop_back();
+                threads.push_back(std::thread(traceRays, quadPos.y, quadPos.y + stepY, quadPos.x, quadPos.x + stepX, camera, rayTracer, window));
+            }
+
+
             std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
             for(int y = 0; y < 800; y++)
             {
@@ -90,4 +115,29 @@ int main(int argc, char *argv[])
     window->cleanUp();
 
     return 0;
+}
+
+void traceRays(int startY, int endY, int startX, int endX, std::shared_ptr<Camera> camera, std::shared_ptr<RayTracer> rayTracer, std::shared_ptr<Window> window)
+{
+    for(int y = startY; y < endY; y++)
+    {
+        
+        for(int x = startX; x < endX; x++)
+        {
+            Ray ray = camera->createRay(glm::vec3(x, y, 0));
+
+            glm::vec3 color = glm::vec3(0.1f,0.1f,0.1f);
+
+            rayTracer->traceRay(ray, color);
+
+            color.x *= 255;
+            color.y *= 255;
+            color.z *= 255;
+            
+            mutex.lock();
+                window->drawPixel(x, y, glm::clamp(color, glm::vec3(0,0,0), glm::vec3(255,255,255)));
+            mutex.unlock();
+        }
+
+    }
 }
