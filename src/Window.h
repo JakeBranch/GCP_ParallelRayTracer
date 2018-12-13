@@ -4,6 +4,9 @@
 #include <SDL.h>
 #include <glm/glm.hpp>
 
+/**
+*   Class to handle drawing of pixels
+*/
 class Window
 {
     public:
@@ -11,7 +14,6 @@ class Window
 
     void drawPixel(int x, int y, glm::vec3 col);
     void display();
-
     void cleanUp();
 
     private:

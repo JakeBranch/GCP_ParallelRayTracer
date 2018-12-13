@@ -1,13 +1,11 @@
 #include <iostream>
+#include <memory>
+#include <chrono>
+#include <cstdlib>
+#include <time.h>
 
 #include <SDL.h>
 #include <glm/glm.hpp>
-
-#include <memory>
-#include <list>
-#include <omp.h>
-#include <vector>
-#include <chrono>
 
 #include "Camera.h"
 #include "Ray.h"
@@ -20,7 +18,7 @@ int main(int argc, char *argv[])
     std::shared_ptr<Camera> camera = std::make_shared<Camera>();
     std::shared_ptr<Window> window = std::make_shared<Window>();
     std::shared_ptr<RayTracer> rayTracer = std::make_shared<RayTracer>();
-    
+
     std::shared_ptr<Sphere> sphere1 = std::make_shared<Sphere>(glm::vec3(3.0f, 0 , -20), 2, glm::vec3(0.75f,0,0.75f));
     rayTracer->addSphere(sphere1);
 

@@ -7,26 +7,13 @@ Geometry::Geometry()
 
 }
 
-// glm::vec3 Geometry::getClosestPoint(Ray ray, std::shared_ptr<Sphere> sphere)
-// {
-//     glm::vec3 a = ray.getOrigin() - glm::vec3(0,0,0);  
-//     glm::vec3 p = sphere->getPosition() - glm::vec3(0,0,0);
-
-//     glm::vec3 rayDirection = glm::normalize(ray.getDirection());
-
-//     return a + ((p - a) * rayDirection) * rayDirection;
-// }
-
-// glm::vec3 Geometry::getClosestIntersectionPoint(Ray ray, std::shared_ptr<Sphere> sphere, float distance)
-// {
-//     glm::vec3 rayDirection = glm::normalize(ray.getDirection());
-//     float x = glm::sqrt((sphere->getRadius() * sphere->getRadius()) - (distance * distance));
-//     glm::vec3 a = ray.getOrigin() - glm::vec3(0,0,0);
-//     glm::vec3 p = sphere->getPosition() - glm::vec3(0,0,0);
-
-//     return a + (glm::dot((p - a), rayDirection) - x) * rayDirection;
-// }
-
+/*
+* getIntersectPoint:
+* 1) Check if ray origin is inside sphere
+* 2) Calculate shortest distance from sphere origin to the ray 
+* 3) Calculate intersect response
+* 4) Calculate distance to intersect
+*/
 IntersectResponse Geometry::getIntersectPoint(Ray ray, std::shared_ptr<Sphere> sphere)
 {
     IntersectResponse rtn;

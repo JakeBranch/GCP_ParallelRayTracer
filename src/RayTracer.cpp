@@ -3,13 +3,17 @@
 #include "Geometry.h"
 #include "Sphere.h"
 
-#include <iostream>
-
 RayTracer::RayTracer()
 {
     geometry = std::make_shared<Geometry>();
 }
 
+/**
+* traceRay:
+* 1) Loop through spheres and check if ray intersects and calculate color
+* 2) If ray intersects create reflection and shadow rays and recursively call traceRay()
+* 3) Color is returned via reference to variable
+*/
 void RayTracer::traceRay(Ray ray, glm::vec3 &color)
 {
     float distance = 10000000;
@@ -37,12 +41,8 @@ void RayTracer::traceRay(Ray ray, glm::vec3 &color)
                 if(ray.isPrimary)
                 {
                     glm::vec3 surfaceNormal = (response.intersectPoint - (*it)->getPosition()) / (*it)->getRadius();
-
                     glm::vec3 lightDirection = glm::normalize(glm::vec3(100, 100, 250) - response.intersectPoint);
-
-                    // glm::vec3 reflectDirection = 2 * (glm::dot(lightDirection, surfaceNormal)) * surfaceNormal - lightDirection;
                     glm::vec3 reflectDirection = glm::reflect(ray.getDirection(), surfaceNormal);
-                    // glm::vec3 reflectDirection = -lightDirection - (2.0f * glm::dot(surfaceNormal, -lightDirection)) * surfaceNormal;
 
                     Ray reflectRay;
                     reflectRay.setDirection(reflectDirection);

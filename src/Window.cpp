@@ -1,10 +1,9 @@
 #include "Window.h"
 
+#include <iostream>
+
 #define SCREEN_WIDTH 600
 #define SCREEN_HEIGHT 800
-
-#include <iostream>
-#include <exception>
 
 Window::Window()
 {
