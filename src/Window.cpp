@@ -7,7 +7,7 @@
 
 Window::Window()
 {
-    window = SDL_CreateWindow("Ray Tracer - Single Thread",
+    window = SDL_CreateWindow("Ray Tracer - STL threads (job pooling)",
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
         SCREEN_WIDTH, SCREEN_HEIGHT, 
         SDL_WINDOW_RESIZABLE
