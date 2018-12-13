@@ -45,10 +45,10 @@ int main(int argc, char *argv[])
 
     std::vector<std::thread> threads;
 
-    int numOfQuads = 100;
+    int numOfQuads = 16;
 
-    int stepX = 600 / glm::sqrt(numOfQuads);
-    int stepY = 800 / glm::sqrt(numOfQuads);
+    float stepX = 600.0f / glm::sqrt(numOfQuads);
+    float stepY = 800.0f / glm::sqrt(numOfQuads);
   
 	while (running)
 	{
