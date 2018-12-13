@@ -1,14 +1,13 @@
 #include "Window.h"
 
+#include <iostream>
+
 #define SCREEN_WIDTH 600
 #define SCREEN_HEIGHT 800
 
-#include <iostream>
-#include <exception>
-
 Window::Window()
 {
-    window = SDL_CreateWindow("Ray Tracer - OpenMP",
+    window = SDL_CreateWindow("Ray Tracer - Single Thread",
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
         SCREEN_WIDTH, SCREEN_HEIGHT, 
         SDL_WINDOW_RESIZABLE
