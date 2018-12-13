@@ -4,8 +4,6 @@
 #include <glm/glm.hpp>
 
 #include <memory>
-#include <list>
-#include <omp.h>
 #include <thread>
 #include <mutex>
 #include <vector>

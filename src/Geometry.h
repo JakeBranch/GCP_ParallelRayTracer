@@ -4,6 +4,9 @@
 #include <glm/glm.hpp>
 #include <memory>
 
+/*
+* Struct to hold intersection data
+*/
 struct IntersectResponse
 {
     bool hit;
@@ -14,6 +17,9 @@ struct IntersectResponse
 class Ray;
 class Sphere;
 
+/**
+* Class to handle geometry intersections
+*/
 class Geometry
 {
     public:

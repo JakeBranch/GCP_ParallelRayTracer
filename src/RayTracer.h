@@ -9,12 +9,15 @@ class Geometry;
 class Sphere;
 class Ray;
 
+/**
+*   Class to handle tracing of rays
+*/
 class RayTracer
 {
     public:
         RayTracer();
+        
         void traceRay(Ray ray, glm::vec3 &color);
-
         void addSphere(std::shared_ptr<Sphere> sphere);
 
     private:
