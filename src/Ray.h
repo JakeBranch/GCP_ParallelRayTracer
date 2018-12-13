@@ -3,6 +3,9 @@
 
 #include <glm/glm.hpp>
 
+/**
+*   Class to store ray data
+*/
 class Ray
 {
     public:
