@@ -4,11 +4,8 @@
 #include <glm/glm.hpp>
 
 #include <memory>
-#include <list>
-#include <omp.h>
 #include <ppl.h> 
 #include <ppltasks.h>
-#include <vector>
 #include <chrono>
 
 #include "Camera.h"
