@@ -7,7 +7,7 @@
 
 Window::Window()
 {
-    window = SDL_CreateWindow("Ray Tracer - Parallel Performance Library (PPL)",
+    window = SDL_CreateWindow("Ray Tracer - Parallel Patterns Library (PPL)",
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
         SCREEN_WIDTH, SCREEN_HEIGHT, 
         SDL_WINDOW_RESIZABLE
