@@ -5,7 +5,7 @@ Parallel ray tracer for a final year assignment at Bournemouth University.
 To run the program:
 
 $git clone https://github.com/JakeBranch/GCP_ParallelRayTracer.git         
-$cd project root dir          
+$cd GCP_ParallelRayTracer\                
 $mkdir build          
 $cd build            
 $cmake ..              
